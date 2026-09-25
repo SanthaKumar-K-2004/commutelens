@@ -74,7 +74,7 @@ export const CommutePlanner: React.FC = () => {
 
   return (
     <div style={{ width: '100%', maxWidth: '1840px', margin: '0 auto', padding: '16px 24px 60px 24px' }}>
-      {/* Top Professional Header Bar */}
+      {/* Top Header Bar */}
       <header style={{
         display: 'flex',
         alignItems: 'center',
@@ -97,7 +97,8 @@ export const CommutePlanner: React.FC = () => {
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
-            boxShadow: '0 2px 6px rgba(26, 115, 232, 0.25)'
+            boxShadow: '0 2px 6px rgba(26, 115, 232, 0.25)',
+            transition: 'transform 0.2s ease'
           }}>
             <Navigation style={{ width: '22px', height: '22px', color: '#ffffff' }} />
           </div>
@@ -182,9 +183,9 @@ export const CommutePlanner: React.FC = () => {
           />
 
           {planData && selectedItinerary && (
-            <>
+            <div className="anim-fade-in">
               {/* Recommended Route Summary Banner */}
-              <div style={{
+              <div className="anim-slide-up" style={{
                 padding: '16px 20px',
                 marginBottom: '18px',
                 background: 'var(--google-blue-surface)',
@@ -234,37 +235,42 @@ export const CommutePlanner: React.FC = () => {
               </div>
 
               {/* 3 Distinct Route Cards: Fastest, Cheapest, Greenest */}
-              {planData.itineraries.map((itin) => (
-                <RouteCard
-                  key={itin.id}
-                  itinerary={itin}
-                  isSelected={itin.id === selectedItinId}
-                  onSelect={() => {
-                    setSelectedItinId(itin.id);
-                    setActiveLegId(null);
-                  }}
-                />
+              {planData.itineraries.map((itin, idx) => (
+                <div key={itin.id} className={`anim-slide-up-${Math.min(idx + 1, 3)}`}>
+                  <RouteCard
+                    itinerary={itin}
+                    isSelected={itin.id === selectedItinId}
+                    onSelect={() => {
+                      setSelectedItinId(itin.id);
+                      setActiveLegId(null);
+                    }}
+                  />
+                </div>
               ))}
 
               {/* Green Receipt for Selected Route */}
-              <GreenReceipt
-                itinerary={selectedItinerary}
-                onOpenMethodology={() => setIsMethodologyOpen(true)}
-              />
+              <div className="anim-slide-up-2">
+                <GreenReceipt
+                  itinerary={selectedItinerary}
+                  onOpenMethodology={() => setIsMethodologyOpen(true)}
+                />
+              </div>
 
               {/* Step-by-Step Leg Timeline */}
-              <LegTimeline
-                itinerary={selectedItinerary}
-                activeLegId={activeLegId}
-                onLegSelect={setActiveLegId}
-              />
-            </>
+              <div className="anim-slide-up-3">
+                <LegTimeline
+                  itinerary={selectedItinerary}
+                  activeLegId={activeLegId}
+                  onLegSelect={setActiveLegId}
+                />
+              </div>
+            </div>
           )}
         </div>
 
         {/* Right Column: Interactive Map + Climate Comfort Dashboard + Timing Intelligence */}
         {planData && selectedItinerary && (
-          <div>
+          <div className="anim-fade-in">
             {/* Interactive Route Map */}
             <RouteMap
               origin={origin}
@@ -289,7 +295,7 @@ export const CommutePlanner: React.FC = () => {
         )}
       </div>
 
-      {/* Footer Attributions */}
+      {/* Clean Footer Without OpenStreetMap */}
       <footer style={{
         marginTop: '60px',
         paddingTop: '20px',
@@ -300,11 +306,11 @@ export const CommutePlanner: React.FC = () => {
       }}>
         <div style={{ display: 'flex', justifyContent: 'center', gap: '20px', flexWrap: 'wrap', marginBottom: '8px' }}>
           {ATTRIBUTIONS.map((attr, idx) => (
-            <span key={idx} style={{ color: 'var(--text-secondary)' }}>{attr}</span>
+            <span key={idx} style={{ color: 'var(--text-secondary)' }}>• {attr}</span>
           ))}
         </div>
-        <p style={{ color: 'var(--text-dim)' }}>
-          Built for Hyderabad Commuters · Powered by Next.js, OpenTripPlanner concepts, Google Maps Platform & ITF Carbon LCA.
+        <p style={{ color: 'var(--text-dim)', fontSize: '0.76rem' }}>
+          CommuteLens Hyderabad · High-Efficiency Transit Decision Engine & Climate Comfort Platform
         </p>
       </footer>
 

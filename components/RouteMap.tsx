@@ -27,7 +27,7 @@ export const RouteMap: React.FC<RouteMapProps> = ({
     setIsClient(true);
   }, []);
 
-  // Initialize and update Leaflet OpenStreetMap
+  // Initialize and update Leaflet Map
   useEffect(() => {
     if (!isClient || !mapContainerRef.current) return;
 
@@ -50,7 +50,7 @@ export const RouteMap: React.FC<RouteMapProps> = ({
           attributionControl: false
         });
 
-        // CartoDB Voyager light street tiles
+        // CartoDB Voyager clean street tiles
         L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
           maxZoom: 19,
           subdomains: 'abcd'
@@ -69,13 +69,13 @@ export const RouteMap: React.FC<RouteMapProps> = ({
 
       const bounds: [number, number][] = [];
 
-      // 1. Origin Marker (Google Green)
+      // 1. Origin Marker (Google Green with gentle pulse)
       bounds.push([origin.lat, origin.lng]);
       const originIcon = L.divIcon({
         className: 'custom-map-marker',
         html: `
           <div style="position:relative;display:flex;align-items:center;justify-content:center;width:26px;height:26px;">
-            <div style="position:absolute;width:26px;height:26px;border-radius:50%;background:rgba(30,142,62,0.25);animation:pulseGlow 2s infinite;"></div>
+            <div style="position:absolute;width:26px;height:26px;border-radius:50%;background:rgba(30,142,62,0.3);animation:gentlePulse 2.4s infinite ease-in-out;"></div>
             <div style="width:14px;height:14px;border-radius:50%;background:#1e8e3e;border:2.5px solid #ffffff;box-shadow:0 1px 4px rgba(60,64,67,0.35);"></div>
           </div>
         `,
@@ -87,13 +87,13 @@ export const RouteMap: React.FC<RouteMapProps> = ({
         .bindPopup(`<strong>Origin</strong><br/>${origin.name}`)
         .addTo(layerGroup);
 
-      // 2. Destination Marker (Google Red)
+      // 2. Destination Marker (Google Red with gentle pulse)
       bounds.push([destination.lat, destination.lng]);
       const destIcon = L.divIcon({
         className: 'custom-map-marker',
         html: `
           <div style="position:relative;display:flex;align-items:center;justify-content:center;width:26px;height:26px;">
-            <div style="position:absolute;width:26px;height:26px;border-radius:50%;background:rgba(217,48,37,0.25);animation:pulseGlow 2s infinite;"></div>
+            <div style="position:absolute;width:26px;height:26px;border-radius:50%;background:rgba(217,48,37,0.3);animation:gentlePulse 2.4s infinite ease-in-out;"></div>
             <div style="width:14px;height:14px;border-radius:50%;background:#d93025;border:2.5px solid #ffffff;box-shadow:0 1px 4px rgba(60,64,67,0.35);"></div>
           </div>
         `,
@@ -183,7 +183,7 @@ export const RouteMap: React.FC<RouteMapProps> = ({
 
         <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
           <span className="badge badge-source" style={{ fontSize: '0.72rem' }}>
-            OpenStreetMap CartoDB Tiles
+            Hyderabad Transit Network
           </span>
         </div>
       </div>

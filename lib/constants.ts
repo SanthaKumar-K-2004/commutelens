@@ -4,10 +4,10 @@ export const APP_NAME = 'CommuteLens';
 export const APP_TAGLINE = 'Hyderabad Multi-Modal Commute & Climate Comfort Planner';
 
 export const ATTRIBUTIONS = [
-  'Contains data provided by Hyderabad Metro Rail Ltd.',
-  'Contains data provided by TGSRTC',
-  '© OpenStreetMap contributors',
-  'Emission methodology based on ITF India Life-cycle Assessment (2023)'
+  'Contains official transit schedule data provided by Hyderabad Metro Rail Ltd. (HMRL)',
+  'Contains public bus timetable data provided by TGSRTC',
+  'Air quality data sourced from Central Pollution Control Board (CPCB) monitoring stations',
+  'Lifecycle emission factors based on International Transport Forum (ITF) India Assessment (2023)'
 ];
 
 // India-specific lifecycle emission factors (gCO2e per passenger-kilometer)
@@ -101,29 +101,36 @@ export const HYDERABAD_PLACES: Point[] = [
     category: 'metro_station'
   },
   {
-    name: 'MG Bus Station (MGBS / Imlibun)',
-    lat: 17.3789,
-    lng: 78.4828,
-    description: 'Central Inter-state & City Bus Terminal',
+    name: 'Jubilee Bus Station (JBS)',
+    lat: 17.4526,
+    lng: 78.4988,
+    description: 'Green Line Terminal & Intercity Bus Hub',
     category: 'bus_station'
   },
   {
-    name: 'Jubilee Hills Check Post',
-    lat: 17.4285,
-    lng: 78.4116,
-    description: 'Blue Line Metro & West Hyderabad',
-    category: 'metro_station'
+    name: 'Mahatma Gandhi Bus Station (MGBS)',
+    lat: 17.3789,
+    lng: 78.4815,
+    description: 'Green & Red Line Metro Interchange & Central Bus Hub',
+    category: 'bus_station'
   },
   {
-    name: 'Kacheguda Railway Station',
-    lat: 17.3911,
-    lng: 78.4975,
-    description: 'Historic Railway Hub',
-    category: 'railway'
+    name: 'Rajiv Gandhi International Airport (RGIA)',
+    lat: 17.2403,
+    lng: 78.4294,
+    description: 'Shamshabad Airport Terminal',
+    category: 'landmark'
   }
 ];
 
-export const HYDERABAD_CENTER = {
-  lat: 17.4100,
-  lng: 78.4600
+// Transit Speed Parameters
+export const ROUTING_CONSTANTS = {
+  WALK_SPEED_MPS: 1.15,               // 4.14 km/h walking speed
+  MAX_WALK_METERS_DIRECT: 1200,       // Max direct walking tolerance
+  MAX_WALK_METERS_TRANSIT: 600,       // Max walk to reach bus/metro stop
+  INTERMODAL_TRANSFER_RADIUS_M: 450,  // Proximity for bus-metro transfer links
+  BUS_BOARDING_DELAY_SEC: 90,         // Wait buffer per bus leg
+  METRO_BOARDING_DELAY_SEC: 120,      // Platform access & wait buffer
+  DEFAULT_BUS_HEADWAY_MIN: 12,        // Typical Hyderabad bus interval
+  DEFAULT_METRO_HEADWAY_MIN: 6        // Typical HMRL peak headway
 };

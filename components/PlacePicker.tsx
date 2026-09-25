@@ -32,6 +32,7 @@ export const PlacePicker: React.FC<PlacePickerProps> = ({
   const [destSuggestions, setDestSuggestions] = useState<Point[]>([]);
   const [showOriginMenu, setShowOriginMenu] = useState(false);
   const [showDestMenu, setShowDestMenu] = useState(false);
+  const [isSwapped, setIsSwapped] = useState(false);
 
   const originRef = useRef<HTMLDivElement>(null);
   const destRef = useRef<HTMLDivElement>(null);
@@ -75,6 +76,7 @@ export const PlacePicker: React.FC<PlacePickerProps> = ({
   };
 
   const handleSwap = () => {
+    setIsSwapped(prev => !prev);
     const temp = origin;
     onOriginChange(destination);
     onDestinationChange(temp);
@@ -110,7 +112,8 @@ export const PlacePicker: React.FC<PlacePickerProps> = ({
             border: '1px solid var(--border-normal)',
             borderRadius: 'var(--radius-md)',
             padding: '10px 14px',
-            gap: '12px'
+            gap: '12px',
+            transition: 'border-color 0.2s ease, box-shadow 0.2s ease'
           }}>
             <div style={{
               width: '10px',
@@ -152,7 +155,7 @@ export const PlacePicker: React.FC<PlacePickerProps> = ({
           </div>
 
           {showOriginMenu && (
-            <div style={{
+            <div className="anim-slide-up" style={{
               position: 'absolute',
               top: '100%',
               left: 0,
@@ -196,7 +199,7 @@ export const PlacePicker: React.FC<PlacePickerProps> = ({
           )}
         </div>
 
-        {/* Floating Swap Button */}
+        {/* Floating Swap Button with Click Micro-Rotation */}
         <div style={{ display: 'flex', justifyContent: 'flex-end', margin: '-6px 12px -6px 0', zIndex: 2 }}>
           <button
             onClick={handleSwap}
@@ -207,7 +210,9 @@ export const PlacePicker: React.FC<PlacePickerProps> = ({
               height: '32px',
               padding: 0,
               borderRadius: '50%',
-              boxShadow: 'var(--shadow-xs)'
+              boxShadow: 'var(--shadow-xs)',
+              transform: isSwapped ? 'rotate(180deg)' : 'rotate(0deg)',
+              transition: 'transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1)'
             }}
           >
             <ArrowUpDown style={{ width: '14px', height: '14px', color: 'var(--google-blue)' }} />
@@ -223,7 +228,8 @@ export const PlacePicker: React.FC<PlacePickerProps> = ({
             border: '1px solid var(--border-normal)',
             borderRadius: 'var(--radius-md)',
             padding: '10px 14px',
-            gap: '12px'
+            gap: '12px',
+            transition: 'border-color 0.2s ease, box-shadow 0.2s ease'
           }}>
             <MapPin style={{ width: '16px', height: '16px', color: 'var(--google-red)', flexShrink: 0 }} />
             <div style={{ flex: 1 }}>
@@ -258,7 +264,7 @@ export const PlacePicker: React.FC<PlacePickerProps> = ({
           </div>
 
           {showDestMenu && (
-            <div style={{
+            <div className="anim-slide-up" style={{
               position: 'absolute',
               top: '100%',
               left: 0,
@@ -361,7 +367,7 @@ export const PlacePicker: React.FC<PlacePickerProps> = ({
                   padding: '5px 12px',
                   borderRadius: 'var(--radius-pill)',
                   cursor: 'pointer',
-                  transition: 'all 0.15s ease',
+                  transition: 'all 0.2s cubic-bezier(0.2, 0, 0, 1)',
                   boxShadow: active ? '0 1px 3px rgba(60, 64, 67, 0.2)' : 'none'
                 }}
               >

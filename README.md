@@ -81,5 +81,5 @@ FORCE_DEMO_DATA=false
 
 - Contains data provided by **Hyderabad Metro Rail Ltd. (HMRL)**
 - Contains data provided by **Telangana State Road Transport Corporation (TGSRTC)**
-- © **OpenStreetMap** contributors
+- Air quality data provided by **Central Pollution Control Board (CPCB)** monitoring network
 - Emissions factors derived from **ITF India Life-cycle Assessment (2023)**
