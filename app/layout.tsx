@@ -18,7 +18,8 @@ export const metadata: Metadata = {
 
 export const viewport: Viewport = {
   width: 'device-width',
-  initialScale: 1
+  initialScale: 1,
+  themeColor: '#ffffff'
 };
 
 export default function RootLayout({
@@ -28,7 +29,18 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body>{children}</body>
+      <body>
+        {/* Google 4-Color Accent Bar */}
+        <div style={{
+          height: '4px',
+          width: '100%',
+          background: 'linear-gradient(90deg, #4285F4 0% 25%, #EA4335 25% 50%, #FBBC05 50% 75%, #34A853 75% 100%)',
+          position: 'sticky',
+          top: 0,
+          zIndex: 100
+        }} />
+        {children}
+      </body>
     </html>
   );
 }

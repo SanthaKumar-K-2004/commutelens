@@ -2,7 +2,7 @@
 
 import React from 'react';
 import { DepartureComparison as DepartureComparisonType } from '@/lib/types';
-import { Clock, Sparkles, Check, ArrowRight } from 'lucide-react';
+import { Clock } from 'lucide-react';
 
 interface DepartureComparisonProps {
   comparisons: DepartureComparisonType[];
@@ -16,36 +16,35 @@ export const DepartureComparison: React.FC<DepartureComparisonProps> = ({
   onSelectOffset
 }) => {
   return (
-    <div className="glass-panel" style={{ padding: '24px', marginBottom: '24px' }}>
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '16px', flexWrap: 'wrap', gap: '8px' }}>
+    <div className="glass-panel" style={{ padding: '20px', marginBottom: '20px' }}>
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '14px', flexWrap: 'wrap', gap: '8px' }}>
         <div>
           <h3 style={{ fontSize: '1.15rem', fontWeight: 700, color: 'var(--text-main)', display: 'flex', alignItems: 'center', gap: '8px' }}>
-            <Clock style={{ width: '18px', height: '18px', color: 'var(--comfort-cyan)' }} />
-            Departure Window Intelligence
+            <Clock style={{ width: '18px', height: '18px', color: 'var(--google-blue)' }} />
+            Departure Window Comparison
           </h3>
-          <p style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>
-            Compare departure times to avoid peak heat, heavy road pollution, and rain spells.
+          <p style={{ fontSize: '0.82rem', color: 'var(--text-muted)' }}>
+            Timing sensitivity analysis across heat, air quality, and scheduled transit headways.
           </p>
         </div>
 
-        <span className="badge badge-comfort">
-          <Sparkles style={{ width: '12px', height: '12px' }} />
-          Smart Commute Timing
+        <span className="badge badge-source" style={{ fontSize: '0.74rem' }}>
+          Real-Time Headways
         </span>
       </div>
 
       <div style={{ overflowX: 'auto' }}>
         <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left', minWidth: '600px' }}>
           <thead>
-            <tr style={{ borderBottom: '1px solid var(--border-subtle)', color: 'var(--text-dim)', fontSize: '0.72rem', letterSpacing: '0.04em' }}>
+            <tr style={{ background: 'var(--bg-primary)', borderBottom: '1px solid var(--border-normal)', color: 'var(--text-secondary)', fontSize: '0.72rem', letterSpacing: '0.04em' }}>
               <th style={{ padding: '10px 12px' }}>DEPARTURE</th>
               <th style={{ padding: '10px 12px' }}>ARRIVAL</th>
               <th style={{ padding: '10px 12px' }}>DURATION</th>
-              <th style={{ padding: '10px 12px' }}>OUTDOOR WALK</th>
-              <th style={{ padding: '10px 12px' }}>AQI / HEAT</th>
-              <th style={{ padding: '10px 12px' }}>COMFORT SCORE</th>
-              <th style={{ padding: '10px 12px' }}>VERDICT</th>
-              <th style={{ padding: '10px 12px', textAlign: 'right' }}>ACTION</th>
+              <th style={{ padding: '10px 12px' }}>WALK</th>
+              <th style={{ padding: '10px 12px' }}>ATMOSPHERE</th>
+              <th style={{ padding: '10px 12px' }}>COMFORT</th>
+              <th style={{ padding: '10px 12px' }}>STATUS</th>
+              <th style={{ padding: '10px 12px', textAlign: 'right' }}>SELECT</th>
             </tr>
           </thead>
           <tbody>
@@ -57,71 +56,73 @@ export const DepartureComparison: React.FC<DepartureComparisonProps> = ({
                   key={c.offsetMinutes}
                   onClick={() => onSelectOffset(c.offsetMinutes)}
                   style={{
-                    borderBottom: '1px solid rgba(255, 255, 255, 0.04)',
-                    background: isSelected ? 'rgba(16, 185, 129, 0.1)' : 'transparent',
+                    borderBottom: '1px solid var(--border-subtle)',
+                    background: isSelected ? 'var(--google-blue-surface)' : 'transparent',
                     cursor: 'pointer',
                     transition: 'background 0.15s ease'
                   }}
                   onMouseEnter={(e) => {
-                    if (!isSelected) e.currentTarget.style.background = 'rgba(255, 255, 255, 0.03)';
+                    if (!isSelected) e.currentTarget.style.background = 'var(--bg-primary)';
                   }}
                   onMouseLeave={(e) => {
                     if (!isSelected) e.currentTarget.style.background = 'transparent';
                   }}
                 >
-                  <td style={{ padding: '12px', fontWeight: 700, color: 'var(--text-main)', fontSize: '0.9rem' }}>
+                  <td style={{ padding: '12px', fontWeight: 700, color: 'var(--text-main)', fontSize: '0.88rem' }}>
                     {c.label}
                   </td>
-                  <td style={{ padding: '12px', color: 'var(--text-muted)', fontSize: '0.85rem' }}>
+                  <td style={{ padding: '12px', color: 'var(--text-secondary)', fontSize: '0.84rem' }}>
                     {c.arrivalTime}
                   </td>
-                  <td style={{ padding: '12px', color: 'var(--text-main)', fontWeight: 600, fontSize: '0.85rem' }}>
-                    {c.durationMinutes} min
+                  <td style={{ padding: '12px', color: 'var(--text-main)', fontWeight: 700, fontSize: '0.86rem' }}>
+                    {c.durationMinutes}m
                   </td>
-                  <td style={{ padding: '12px', color: '#38bdf8', fontSize: '0.85rem' }}>
-                    {c.outdoorWalkMinutes} min
+                  <td style={{ padding: '12px', color: 'var(--google-blue)', fontSize: '0.86rem', fontWeight: 600 }}>
+                    {c.outdoorWalkMinutes}m
                   </td>
-                  <td style={{ padding: '12px', fontSize: '0.8rem', color: 'var(--text-dim)' }}>
+                  <td style={{ padding: '12px', fontSize: '0.8rem', color: 'var(--text-secondary)' }}>
                     AQI {c.aqi} · {c.heatCondition}
                   </td>
                   <td style={{ padding: '12px' }}>
                     <span style={{
-                      fontWeight: 700,
-                      color: c.comfortScore >= 80 ? '#34d399' : c.comfortScore >= 65 ? '#fbbf24' : '#ef4444',
-                      fontSize: '0.92rem'
+                      fontWeight: 800,
+                      color: c.comfortScore >= 80 ? 'var(--google-green)' : c.comfortScore >= 65 ? 'var(--google-yellow-dark)' : 'var(--google-red)',
+                      fontSize: '0.9rem'
                     }}>
                       {c.comfortScore}/100
                     </span>
                   </td>
                   <td style={{ padding: '12px' }}>
                     {c.isRecommended ? (
-                      <span className="badge badge-comfort" style={{ fontSize: '0.72rem' }}>
-                        ★ Best Window
+                      <span className="badge badge-greenest" style={{ fontSize: '0.72rem' }}>
+                        Optimal
                       </span>
                     ) : (
-                      <span style={{ fontSize: '0.75rem', color: 'var(--text-dim)' }}>
-                        {c.verdict}
+                      <span style={{ fontSize: '0.74rem', color: 'var(--text-dim)' }}>
+                        Standard
                       </span>
                     )}
                   </td>
                   <td style={{ padding: '12px', textAlign: 'right' }}>
-                    {isSelected ? (
-                      <span style={{ display: 'inline-flex', alignItems: 'center', gap: '4px', color: 'var(--emerald-400)', fontSize: '0.75rem', fontWeight: 600 }}>
-                        <Check style={{ width: '14px', height: '14px' }} />
-                        Active
-                      </span>
-                    ) : (
-                      <button
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          onSelectOffset(c.offsetMinutes);
-                        }}
-                        className="btn-secondary"
-                        style={{ padding: '4px 10px', fontSize: '0.75rem' }}
-                      >
-                        Select
-                      </button>
-                    )}
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        onSelectOffset(c.offsetMinutes);
+                      }}
+                      style={{
+                        padding: '5px 12px',
+                        borderRadius: 'var(--radius-pill)',
+                        border: isSelected ? '1px solid var(--google-blue)' : '1px solid var(--border-normal)',
+                        background: isSelected ? 'var(--google-blue)' : '#ffffff',
+                        color: isSelected ? '#ffffff' : 'var(--text-secondary)',
+                        fontSize: '0.75rem',
+                        fontWeight: 600,
+                        cursor: 'pointer',
+                        transition: 'all 0.15s ease'
+                      }}
+                    >
+                      {isSelected ? 'Active' : 'Choose'}
+                    </button>
                   </td>
                 </tr>
               );

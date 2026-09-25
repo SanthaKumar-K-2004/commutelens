@@ -11,7 +11,7 @@ import { LegTimeline } from './LegTimeline';
 import { DepartureComparison } from './DepartureComparison';
 import { GreenReceipt } from './GreenReceipt';
 import { MethodologyDrawer } from './MethodologyDrawer';
-import { Compass, Sparkles, BookOpen, ShieldCheck, AlertCircle, RefreshCw } from 'lucide-react';
+import { Navigation, BookOpen, AlertCircle, RefreshCw, CheckCircle2 } from 'lucide-react';
 
 export const CommutePlanner: React.FC = () => {
   const [origin, setOrigin] = useState<Point>(HYDERABAD_PLACES[0]); // HITEC City
@@ -73,161 +73,163 @@ export const CommutePlanner: React.FC = () => {
     planData?.itineraries.find(i => i.id === selectedItinId) || planData?.itineraries[0] || null;
 
   return (
-    <div style={{ maxWidth: '1280px', margin: '0 auto', padding: '24px 16px 60px 16px' }}>
-      {/* Top Navigation Bar */}
+    <div style={{ width: '100%', maxWidth: '1840px', margin: '0 auto', padding: '16px 24px 60px 24px' }}>
+      {/* Top Professional Header Bar */}
       <header style={{
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'space-between',
         flexWrap: 'wrap',
         gap: '16px',
-        marginBottom: '28px',
-        paddingBottom: '20px',
-        borderBottom: '1px solid var(--border-subtle)'
+        marginBottom: '20px',
+        padding: '14px 20px',
+        background: '#ffffff',
+        borderRadius: 'var(--radius-lg)',
+        border: '1px solid var(--border-normal)',
+        boxShadow: 'var(--shadow-xs)'
       }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
           <div style={{
-            width: '44px',
-            height: '44px',
-            borderRadius: '12px',
-            background: 'linear-gradient(135deg, #10b981 0%, #007abb 100%)',
+            width: '40px',
+            height: '40px',
+            borderRadius: '10px',
+            background: 'var(--google-blue)',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
-            boxShadow: 'var(--shadow-glow)'
+            boxShadow: '0 2px 6px rgba(26, 115, 232, 0.25)'
           }}>
-            <Compass style={{ width: '26px', height: '26px', color: '#ffffff' }} />
+            <Navigation style={{ width: '22px', height: '22px', color: '#ffffff' }} />
           </div>
 
           <div>
             <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-              <h1 style={{ fontSize: '1.6rem', fontWeight: 800, color: 'var(--text-main)', letterSpacing: '-0.03em' }}>
-                {APP_NAME}
+              <h1 style={{ fontSize: '1.45rem', fontWeight: 800, color: 'var(--text-main)', letterSpacing: '-0.02em' }}>
+                CommuteLens
               </h1>
-              <span className="badge badge-greenest" style={{ fontSize: '0.7rem' }}>
-                Hyderabad Transit
+              <span className="badge badge-fastest" style={{ fontSize: '0.72rem' }}>
+                Hyderabad Urban Transit
               </span>
             </div>
-            <p style={{ fontSize: '0.85rem', color: 'var(--text-muted)' }}>
+            <p style={{ fontSize: '0.82rem', color: 'var(--text-secondary)' }}>
               {APP_TAGLINE}
             </p>
           </div>
         </div>
 
-        {/* Action Header Pills */}
+        {/* Action Header Buttons */}
         <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
           <button
             onClick={() => setIsMethodologyOpen(true)}
             className="btn-secondary"
-            style={{ fontSize: '0.82rem' }}
           >
-            <BookOpen style={{ width: '15px', height: '15px', color: 'var(--emerald-400)' }} />
-            Methodology & Provenance
+            <BookOpen style={{ width: '15px', height: '15px', color: 'var(--google-blue)' }} />
+            Methodology & Carbon Model
           </button>
 
           <button
             onClick={() => fetchPlan()}
             className="btn-secondary"
             title="Refresh routes and live environmental data"
-            style={{ padding: '10px' }}
+            style={{ padding: '8px 12px' }}
           >
-            <RefreshCw style={{ width: '16px', height: '16px', color: 'var(--text-muted)' }} />
+            <RefreshCw style={{ width: '15px', height: '15px', color: 'var(--text-secondary)' }} />
           </button>
         </div>
       </header>
 
-      {/* Origin, Destination & Controls */}
-      <PlacePicker
-        origin={origin}
-        destination={destination}
-        departureOffset={departureOffset}
-        isLoading={isLoading}
-        onOriginChange={setOrigin}
-        onDestinationChange={setDestination}
-        onDepartureOffsetChange={handleDepartureOffsetChange}
-        onSubmit={() => fetchPlan(origin, destination, departureOffset)}
-      />
-
       {/* Error state if plan failed */}
       {errorMsg && (
-        <div className="glass-panel" style={{
-          padding: '16px 20px',
-          marginBottom: '24px',
-          background: 'rgba(239, 68, 68, 0.15)',
-          border: '1px solid rgba(239, 68, 68, 0.4)',
+        <div style={{
+          padding: '14px 18px',
+          marginBottom: '20px',
+          background: 'var(--google-red-surface)',
+          border: '1px solid var(--google-red-border)',
+          borderRadius: 'var(--radius-md)',
           display: 'flex',
           alignItems: 'center',
           gap: '12px'
         }}>
-          <AlertCircle style={{ width: '20px', height: '20px', color: '#ef4444', flexShrink: 0 }} />
+          <AlertCircle style={{ width: '18px', height: '18px', color: 'var(--google-red)', flexShrink: 0 }} />
           <div>
-            <strong style={{ display: 'block', fontSize: '0.9rem', color: '#fca5a5' }}>
-              Commute routing alert:
+            <strong style={{ display: 'block', fontSize: '0.88rem', color: 'var(--google-red-hover)' }}>
+              Commute routing notice:
             </strong>
-            <span style={{ fontSize: '0.82rem', color: '#fecaca' }}>{errorMsg}</span>
+            <span style={{ fontSize: '0.82rem', color: 'var(--text-secondary)' }}>{errorMsg}</span>
           </div>
         </div>
       )}
 
-      {/* Main Results View */}
-      {planData && selectedItinerary && (
-        <>
-          {/* Key Differentiator Banner: The Climate Comfort Decision */}
-          <div className="glass-panel" style={{
-            padding: '20px 24px',
-            marginBottom: '24px',
-            background: 'linear-gradient(135deg, rgba(30, 27, 75, 0.8) 0%, rgba(17, 24, 39, 0.9) 100%)',
-            border: '1px solid rgba(139, 92, 246, 0.4)',
-            boxShadow: 'var(--shadow-purple-glow)'
-          }}>
-            <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', flexWrap: 'wrap', gap: '14px' }}>
-              <div style={{ maxWidth: '850px' }}>
-                <span className="badge badge-comfort" style={{ marginBottom: '8px' }}>
-                  <Sparkles style={{ width: '13px', height: '13px' }} />
-                  DECISION ENGINE RECOMMENDATION
-                </span>
-                <h2 style={{ fontSize: '1.35rem', fontWeight: 800, color: '#ffffff', margin: '4px 0 8px 0' }}>
+      {/* Full PC Screen 2-Column Responsive Workspace */}
+      <div style={{
+        display: 'grid',
+        gridTemplateColumns: 'minmax(480px, 520px) 1fr',
+        gap: '24px',
+        alignItems: 'start'
+      }}>
+        {/* Left Column: Origin/Dest + Ranked Route Cards + Receipt + Timeline */}
+        <div>
+          {/* Origin, Destination & Controls */}
+          <PlacePicker
+            origin={origin}
+            destination={destination}
+            departureOffset={departureOffset}
+            isLoading={isLoading}
+            onOriginChange={setOrigin}
+            onDestinationChange={setDestination}
+            onDepartureOffsetChange={handleDepartureOffsetChange}
+            onSubmit={() => fetchPlan(origin, destination, departureOffset)}
+          />
+
+          {planData && selectedItinerary && (
+            <>
+              {/* Recommended Route Summary Banner */}
+              <div style={{
+                padding: '16px 20px',
+                marginBottom: '18px',
+                background: 'var(--google-blue-surface)',
+                border: '1px solid var(--google-blue-border)',
+                borderRadius: 'var(--radius-lg)',
+                boxShadow: 'var(--shadow-xs)'
+              }}>
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '6px', flexWrap: 'wrap', gap: '8px' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                    <CheckCircle2 style={{ width: '16px', height: '16px', color: 'var(--google-green)' }} />
+                    <span style={{ fontSize: '0.82rem', fontWeight: 700, color: '#174ea6' }}>
+                      Recommended Commute Choice
+                    </span>
+                  </div>
+                  <span style={{
+                    background: 'var(--google-green-surface)',
+                    border: '1px solid var(--google-green-border)',
+                    padding: '3px 10px',
+                    borderRadius: 'var(--radius-pill)',
+                    color: 'var(--google-green-hover)',
+                    fontSize: '0.78rem',
+                    fontWeight: 700
+                  }}>
+                    {planData.recommendation.savingsHighlight}
+                  </span>
+                </div>
+
+                <h3 style={{ fontSize: '1.05rem', fontWeight: 800, color: 'var(--text-main)', marginBottom: '4px' }}>
                   {planData.recommendation.title}
-                </h2>
-                <p style={{ fontSize: '0.95rem', color: '#e0e7ff', lineHeight: 1.5, marginBottom: '8px' }}>
+                </h3>
+                <p style={{ fontSize: '0.86rem', color: 'var(--text-secondary)', lineHeight: 1.45, marginBottom: '6px' }}>
                   {planData.recommendation.message}
                 </p>
-                <div style={{ fontSize: '0.82rem', color: '#a5b4fc', display: 'flex', alignItems: 'center', gap: '6px' }}>
-                  <span>Why:</span>
-                  <strong>{planData.recommendation.reason}</strong>
+                <div style={{ fontSize: '0.8rem', color: '#185abc' }}>
+                  <strong>Key factor:</strong> {planData.recommendation.reason}
                 </div>
               </div>
 
-              <div style={{
-                background: 'rgba(16, 185, 129, 0.15)',
-                border: '1px solid rgba(16, 185, 129, 0.35)',
-                padding: '8px 14px',
-                borderRadius: 'var(--radius-md)',
-                color: '#34d399',
-                fontSize: '0.85rem',
-                fontWeight: 700,
-                alignSelf: 'center'
-              }}>
-                {planData.recommendation.savingsHighlight}
-              </div>
-            </div>
-          </div>
-
-          {/* Grid Layout: Left Column = Cards & Timeline, Right Column = Map & Climate Drawer */}
-          <div style={{
-            display: 'grid',
-            gridTemplateColumns: 'repeat(auto-fit, minmax(420px, 1fr))',
-            gap: '24px',
-            alignItems: 'start'
-          }}>
-            {/* Left Column */}
-            <div>
-              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '14px' }}>
-                <h3 style={{ fontSize: '1.15rem', fontWeight: 700, color: 'var(--text-main)' }}>
+              {/* Section Header */}
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '12px' }}>
+                <h3 style={{ fontSize: '1.1rem', fontWeight: 700, color: 'var(--text-main)' }}>
                   Ranked Commute Options
                 </h3>
-                <span style={{ fontSize: '0.78rem', color: 'var(--text-dim)' }}>
-                  Source: {planData.source === 'otp' ? 'OTP 2.10 Engine' : 'TGSRTC + HMRL GTFS Engine'}
+                <span style={{ fontSize: '0.76rem', color: 'var(--text-muted)' }}>
+                  {planData.itineraries.length} verified routes found
                 </span>
               </div>
 
@@ -250,56 +252,58 @@ export const CommutePlanner: React.FC = () => {
                 onOpenMethodology={() => setIsMethodologyOpen(true)}
               />
 
-              {/* Leg-Level Step by Step Timeline */}
+              {/* Step-by-Step Leg Timeline */}
               <LegTimeline
                 itinerary={selectedItinerary}
                 activeLegId={activeLegId}
                 onLegSelect={setActiveLegId}
               />
-            </div>
+            </>
+          )}
+        </div>
 
-            {/* Right Column */}
-            <div>
-              {/* Interactive Route Map */}
-              <RouteMap
-                origin={origin}
-                destination={destination}
-                selectedItinerary={selectedItinerary}
-                activeLegId={activeLegId}
-              />
+        {/* Right Column: Interactive Map + Climate Comfort Dashboard + Timing Intelligence */}
+        {planData && selectedItinerary && (
+          <div>
+            {/* Interactive Route Map */}
+            <RouteMap
+              origin={origin}
+              destination={destination}
+              selectedItinerary={selectedItinerary}
+              activeLegId={activeLegId}
+            />
 
-              {/* Climate Comfort Factor Breakdown */}
-              <ClimateComfortDrawer
-                environment={planData.environment}
-                selectedItinerary={selectedItinerary}
-              />
+            {/* Climate & Environmental Comfort Assessment */}
+            <ClimateComfortDrawer
+              environment={planData.environment}
+              selectedItinerary={selectedItinerary}
+            />
 
-              {/* Departure Window Timing Intelligence */}
-              <DepartureComparison
-                comparisons={planData.departureComparisons}
-                currentOffset={departureOffset}
-                onSelectOffset={handleDepartureOffsetChange}
-              />
-            </div>
+            {/* Departure Window Timing Intelligence Table */}
+            <DepartureComparison
+              comparisons={planData.departureComparisons}
+              currentOffset={departureOffset}
+              onSelectOffset={handleDepartureOffsetChange}
+            />
           </div>
-        </>
-      )}
+        )}
+      </div>
 
       {/* Footer Attributions */}
       <footer style={{
         marginTop: '60px',
-        paddingTop: '24px',
-        borderTop: '1px solid var(--border-subtle)',
+        paddingTop: '20px',
+        borderTop: '1px solid var(--border-normal)',
         textAlign: 'center',
-        fontSize: '0.78rem',
-        color: 'var(--text-dim)'
+        fontSize: '0.8rem',
+        color: 'var(--text-muted)'
       }}>
         <div style={{ display: 'flex', justifyContent: 'center', gap: '20px', flexWrap: 'wrap', marginBottom: '8px' }}>
           {ATTRIBUTIONS.map((attr, idx) => (
-            <span key={idx}>{attr}</span>
+            <span key={idx} style={{ color: 'var(--text-secondary)' }}>{attr}</span>
           ))}
         </div>
-        <p>
+        <p style={{ color: 'var(--text-dim)' }}>
           Built for Hyderabad Commuters · Powered by Next.js, OpenTripPlanner concepts, Google Maps Platform & ITF Carbon LCA.
         </p>
       </footer>

@@ -2,7 +2,7 @@
 
 import React from 'react';
 import { EnvironmentContext, Itinerary } from '@/lib/types';
-import { Sparkles, Wind, Sun, CloudRain, ShieldAlert, CheckCircle2, Info } from 'lucide-react';
+import { Wind, Sun, CloudRain, ShieldAlert, CheckCircle2, Info, Activity } from 'lucide-react';
 
 interface ClimateComfortDrawerProps {
   environment: EnvironmentContext;
@@ -14,18 +14,18 @@ export const ClimateComfortDrawer: React.FC<ClimateComfortDrawerProps> = ({
   selectedItinerary
 }) => {
   const getAqiColor = (aqi: number) => {
-    if (aqi <= 50) return '#10b981'; // Green
-    if (aqi <= 100) return '#f59e0b'; // Amber
-    if (aqi <= 150) return '#f97316'; // Orange
-    return '#ef4444'; // Red
+    if (aqi <= 50) return '#1e8e3e'; // Google Green
+    if (aqi <= 100) return '#b06000'; // Google Amber
+    if (aqi <= 150) return '#e37400'; // Orange
+    return '#d93025'; // Google Red
   };
 
   return (
     <div className="glass-panel" style={{
-      padding: '24px',
-      marginBottom: '24px',
-      background: 'linear-gradient(135deg, rgba(17, 24, 39, 0.85) 0%, rgba(30, 27, 75, 0.45) 100%)',
-      border: '1px solid rgba(139, 92, 246, 0.3)'
+      padding: '20px',
+      marginBottom: '20px',
+      background: '#ffffff',
+      border: '1px solid var(--border-normal)'
     }}>
       {/* Title & Score Indicator */}
       <div style={{
@@ -34,147 +34,138 @@ export const ClimateComfortDrawer: React.FC<ClimateComfortDrawerProps> = ({
         justifyContent: 'space-between',
         flexWrap: 'wrap',
         gap: '12px',
-        marginBottom: '20px'
+        marginBottom: '16px'
       }}>
         <div>
-          <span className="badge badge-comfort" style={{ marginBottom: '8px' }}>
-            <Sparkles style={{ width: '12px', height: '12px' }} />
-            CLIMATE COMFORT ENGINE
-          </span>
-          <h3 style={{ fontSize: '1.25rem', fontWeight: 800, color: 'var(--text-main)', marginTop: '4px' }}>
-            Hyperlocal Environmental Decision Mode
+          <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginBottom: '4px' }}>
+            <Activity style={{ width: '15px', height: '15px', color: 'var(--google-blue)' }} />
+            <span style={{ fontSize: '0.74rem', fontWeight: 700, color: 'var(--google-blue)', textTransform: 'uppercase', letterSpacing: '0.04em' }}>
+              Climate & Comfort Evaluation
+            </span>
+          </div>
+          <h3 style={{ fontSize: '1.15rem', fontWeight: 800, color: 'var(--text-main)' }}>
+            Hyderabad Atmospheric Conditions
           </h3>
-          <p style={{ fontSize: '0.82rem', color: 'var(--text-muted)' }}>
-            Evaluates outdoor walking minutes, air quality exposure, heat index, and rain risk across Hyderabad.
-          </p>
         </div>
 
-        {/* Big Circular Score Badge */}
+        {/* Big Score Badge */}
         <div style={{
           display: 'flex',
           alignItems: 'center',
-          gap: '14px',
-          background: 'rgba(0, 0, 0, 0.35)',
-          padding: '10px 18px',
-          borderRadius: 'var(--radius-lg)',
-          border: '1px solid rgba(139, 92, 246, 0.4)'
+          gap: '12px',
+          background: 'var(--google-blue-surface)',
+          padding: '8px 16px',
+          borderRadius: 'var(--radius-pill)',
+          border: '1px solid var(--google-blue-border)'
         }}>
-          <div style={{ textAlign: 'right' }}>
-            <span style={{ display: 'block', fontSize: '0.7rem', color: '#c084fc', fontWeight: 700, letterSpacing: '0.04em' }}>
-              COMFORT SCORE
-            </span>
-            <span style={{ fontSize: '0.78rem', color: 'var(--text-dim)' }}>
-              {selectedItinerary.climateComfortScore >= 80 ? 'Optimal' : selectedItinerary.climateComfortScore >= 65 ? 'Moderate' : 'Challenging'}
-            </span>
-          </div>
-
-          <div style={{
-            fontSize: '1.9rem',
+          <span style={{ fontSize: '0.78rem', color: '#174ea6', fontWeight: 700 }}>
+            Comfort Index:
+          </span>
+          <span style={{
+            fontSize: '1.4rem',
             fontWeight: 800,
             fontFamily: 'var(--font-display)',
-            background: 'linear-gradient(135deg, #c084fc 0%, #38bdf8 100%)',
-            WebkitBackgroundClip: 'text',
-            WebkitTextFillColor: 'transparent',
+            color: selectedItinerary.climateComfortScore >= 80 ? 'var(--google-green)' : 'var(--google-blue)',
             lineHeight: 1
           }}>
             {selectedItinerary.climateComfortScore}
-            <span style={{ fontSize: '0.9rem', color: 'var(--text-dim)', WebkitTextFillColor: 'initial' }}>/100</span>
-          </div>
+            <span style={{ fontSize: '0.78rem', color: 'var(--text-muted)', fontWeight: 600 }}>/100</span>
+          </span>
         </div>
       </div>
 
       {/* Grid of 4 Environmental Factors */}
       <div style={{
         display: 'grid',
-        gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))',
-        gap: '12px',
-        marginBottom: '20px'
+        gridTemplateColumns: 'repeat(4, 1fr)',
+        gap: '10px',
+        marginBottom: '16px'
       }}>
         {/* Air Quality */}
-        <div className="glass-panel-subtle" style={{ padding: '14px' }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '8px' }}>
-            <Wind style={{ width: '16px', height: '16px', color: getAqiColor(environment.aqi) }} />
-            <span style={{ fontSize: '0.75rem', fontWeight: 600, color: 'var(--text-muted)' }}>HYDERABAD AQI</span>
+        <div style={{ padding: '12px', background: 'var(--bg-primary)', borderRadius: 'var(--radius-md)', border: '1px solid var(--border-normal)' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginBottom: '6px' }}>
+            <Wind style={{ width: '15px', height: '15px', color: getAqiColor(environment.aqi) }} />
+            <span style={{ fontSize: '0.72rem', fontWeight: 700, color: 'var(--text-secondary)' }}>AQI INDEX</span>
           </div>
-          <div style={{ fontSize: '1.25rem', fontWeight: 800, color: getAqiColor(environment.aqi) }}>
+          <div style={{ fontSize: '1.2rem', fontWeight: 800, color: getAqiColor(environment.aqi) }}>
             {environment.aqi}
-            <span style={{ fontSize: '0.75rem', fontWeight: 600, marginLeft: '6px', color: 'var(--text-main)' }}>
-              {environment.aqiCategory}
-            </span>
           </div>
-          <span style={{ fontSize: '0.7rem', color: 'var(--text-dim)' }}>
-            Dominant: {environment.dominantPollutant}
+          <span style={{ fontSize: '0.74rem', color: 'var(--text-secondary)', fontWeight: 600, display: 'block' }}>
+            {environment.aqiCategory}
+          </span>
+          <span style={{ fontSize: '0.68rem', color: 'var(--text-dim)' }}>
+            {environment.dominantPollutant}
           </span>
         </div>
 
         {/* Temperature & Heat Index */}
-        <div className="glass-panel-subtle" style={{ padding: '14px' }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '8px' }}>
-            <Sun style={{ width: '16px', height: '16px', color: '#f59e0b' }} />
-            <span style={{ fontSize: '0.75rem', fontWeight: 600, color: 'var(--text-muted)' }}>HEAT INDEX</span>
+        <div style={{ padding: '12px', background: 'var(--bg-primary)', borderRadius: 'var(--radius-md)', border: '1px solid var(--border-normal)' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginBottom: '6px' }}>
+            <Sun style={{ width: '15px', height: '15px', color: 'var(--google-yellow-dark)' }} />
+            <span style={{ fontSize: '0.72rem', fontWeight: 700, color: 'var(--text-secondary)' }}>HEAT INDEX</span>
           </div>
-          <div style={{ fontSize: '1.25rem', fontWeight: 800, color: '#f59e0b' }}>
+          <div style={{ fontSize: '1.2rem', fontWeight: 800, color: 'var(--google-yellow-dark)' }}>
             {environment.temperatureC}°C
-            <span style={{ fontSize: '0.75rem', fontWeight: 500, marginLeft: '6px', color: 'var(--text-dim)' }}>
-              (Feels {environment.feelsLikeC}°C)
-            </span>
           </div>
-          <span style={{ fontSize: '0.7rem', color: 'var(--text-dim)' }}>
-            UV Index {environment.uvIndex} · {environment.weatherCondition}
+          <span style={{ fontSize: '0.74rem', color: 'var(--text-secondary)', fontWeight: 600, display: 'block' }}>
+            Feels {environment.feelsLikeC}°C
+          </span>
+          <span style={{ fontSize: '0.68rem', color: 'var(--text-dim)' }}>
+            UV {environment.uvIndex}
           </span>
         </div>
 
         {/* Rain Risk */}
-        <div className="glass-panel-subtle" style={{ padding: '14px' }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '8px' }}>
-            <CloudRain style={{ width: '16px', height: '16px', color: '#38bdf8' }} />
-            <span style={{ fontSize: '0.75rem', fontWeight: 600, color: 'var(--text-muted)' }}>PRECIPITATION</span>
+        <div style={{ padding: '12px', background: 'var(--bg-primary)', borderRadius: 'var(--radius-md)', border: '1px solid var(--border-normal)' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginBottom: '6px' }}>
+            <CloudRain style={{ width: '15px', height: '15px', color: 'var(--google-blue)' }} />
+            <span style={{ fontSize: '0.72rem', fontWeight: 700, color: 'var(--text-secondary)' }}>PRECIPITATION</span>
           </div>
-          <div style={{ fontSize: '1.25rem', fontWeight: 800, color: '#38bdf8' }}>
+          <div style={{ fontSize: '1.2rem', fontWeight: 800, color: 'var(--google-blue)' }}>
             {environment.rainProbability}%
-            <span style={{ fontSize: '0.75rem', fontWeight: 500, marginLeft: '6px', color: 'var(--text-dim)' }}>
-              rain risk
-            </span>
           </div>
-          <span style={{ fontSize: '0.7rem', color: 'var(--text-dim)' }}>
-            Storm probability: {environment.thunderstormProbability}%
+          <span style={{ fontSize: '0.74rem', color: 'var(--text-secondary)', fontWeight: 600, display: 'block' }}>
+            Rain risk
+          </span>
+          <span style={{ fontSize: '0.68rem', color: 'var(--text-dim)' }}>
+            Storm: {environment.thunderstormProbability}%
           </span>
         </div>
 
         {/* Outdoor Exposure Time */}
-        <div className="glass-panel-subtle" style={{ padding: '14px' }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '8px' }}>
-            <ShieldAlert style={{ width: '16px', height: '16px', color: '#10b981' }} />
-            <span style={{ fontSize: '0.75rem', fontWeight: 600, color: 'var(--text-muted)' }}>EXPOSURE BURDEN</span>
+        <div style={{ padding: '12px', background: 'var(--bg-primary)', borderRadius: 'var(--radius-md)', border: '1px solid var(--border-normal)' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginBottom: '6px' }}>
+            <ShieldAlert style={{ width: '15px', height: '15px', color: 'var(--google-green)' }} />
+            <span style={{ fontSize: '0.72rem', fontWeight: 700, color: 'var(--text-secondary)' }}>WALK TIME</span>
           </div>
-          <div style={{ fontSize: '1.25rem', fontWeight: 800, color: '#10b981' }}>
-            {selectedItinerary.totalWalkMinutes} min
-            <span style={{ fontSize: '0.75rem', fontWeight: 500, marginLeft: '6px', color: 'var(--text-dim)' }}>
-              outdoor
-            </span>
+          <div style={{ fontSize: '1.2rem', fontWeight: 800, color: 'var(--google-green)' }}>
+            {selectedItinerary.totalWalkMinutes}m
           </div>
-          <span style={{ fontSize: '0.7rem', color: 'var(--text-dim)' }}>
-            {selectedItinerary.totalDurationMinutes - selectedItinerary.totalWalkMinutes} min in AC transit
+          <span style={{ fontSize: '0.74rem', color: 'var(--text-secondary)', fontWeight: 600, display: 'block' }}>
+            Outdoor walking
+          </span>
+          <span style={{ fontSize: '0.68rem', color: 'var(--text-dim)' }}>
+            AC transit: {selectedItinerary.totalDurationMinutes - selectedItinerary.totalWalkMinutes}m
           </span>
         </div>
       </div>
 
       {/* Transparent Reasons List */}
       <div style={{
-        background: 'rgba(0, 0, 0, 0.25)',
-        padding: '16px',
+        background: 'var(--bg-primary)',
+        padding: '12px 16px',
         borderRadius: 'var(--radius-md)',
-        border: '1px solid rgba(255, 255, 255, 0.05)',
-        marginBottom: '16px'
+        border: '1px solid var(--border-normal)',
+        marginBottom: '12px'
       }}>
-        <h4 style={{ fontSize: '0.85rem', fontWeight: 700, color: 'var(--text-main)', marginBottom: '8px', display: 'flex', alignItems: 'center', gap: '6px' }}>
-          <CheckCircle2 style={{ width: '14px', height: '14px', color: 'var(--emerald-400)' }} />
-          Decision Rationale for {selectedItinerary.title}
+        <h4 style={{ fontSize: '0.84rem', fontWeight: 700, color: 'var(--text-main)', marginBottom: '8px', display: 'flex', alignItems: 'center', gap: '6px' }}>
+          <CheckCircle2 style={{ width: '15px', height: '15px', color: 'var(--google-green)' }} />
+          Why this route is comfortable:
         </h4>
         <ul style={{ listStyle: 'none', padding: 0 }}>
           {selectedItinerary.comfortReasons.map((reason, rIdx) => (
-            <li key={rIdx} style={{ fontSize: '0.82rem', color: 'var(--text-muted)', marginBottom: '4px', display: 'flex', alignItems: 'baseline', gap: '8px' }}>
-              <span style={{ color: '#c084fc' }}>•</span>
+            <li key={rIdx} style={{ fontSize: '0.82rem', color: 'var(--text-secondary)', marginBottom: '4px', display: 'flex', alignItems: 'baseline', gap: '8px' }}>
+              <span style={{ color: 'var(--google-blue)', fontWeight: 800 }}>•</span>
               <span>{reason}</span>
             </li>
           ))}
@@ -182,10 +173,10 @@ export const ClimateComfortDrawer: React.FC<ClimateComfortDrawerProps> = ({
       </div>
 
       {/* Disclaimers & Methodology Notice */}
-      <div style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '0.72rem', color: 'var(--text-dim)' }}>
-        <Info style={{ width: '13px', height: '13px', flexShrink: 0 }} />
+      <div style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '0.74rem', color: 'var(--text-muted)' }}>
+        <Info style={{ width: '13px', height: '13px', flexShrink: 0, color: 'var(--text-dim)' }} />
         <span>
-          Indicative route-planning aid combining Google / Open-Meteo hyperlocal atmosphere feeds with GTFS transit schedules. Not medical advice.
+          Indicative decision aid combining live CPCB air quality and Open-Meteo weather with official GTFS timetables.
         </span>
       </div>
     </div>

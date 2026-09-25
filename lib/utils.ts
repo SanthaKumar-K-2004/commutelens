@@ -27,12 +27,12 @@ export function getModeColor(mode: string): string {
     case 'SUBWAY':
     case 'METRO':
     case 'RAIL':
-      return '#007ABB'; // Blue
+      return '#1a73e8'; // Google Blue
     case 'BUS':
-      return '#F59E0B'; // Amber
+      return '#e37400'; // Google Yellow/Amber
     case 'WALK':
-      return '#10B981'; // Green
+      return '#1e8e3e'; // Google Green
     default:
-      return '#6B7280';
+      return '#5f6368'; // Google Charcoal
   }
 }

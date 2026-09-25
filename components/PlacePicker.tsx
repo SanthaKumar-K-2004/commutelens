@@ -3,7 +3,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Point } from '@/lib/types';
 import { HYDERABAD_PLACES } from '@/lib/constants';
-import { MapPin, Navigation, ArrowUpDown, Clock, Search, Sparkles } from 'lucide-react';
+import { MapPin, Navigation, ArrowUpDown, Clock, Search, Bookmark } from 'lucide-react';
 
 interface PlacePickerProps {
   origin: Point;
@@ -88,70 +88,84 @@ export const PlacePicker: React.FC<PlacePickerProps> = ({
   ];
 
   return (
-    <div className="glass-panel" style={{ padding: '24px', marginBottom: '24px' }}>
+    <div className="glass-panel" style={{ padding: '20px', marginBottom: '20px' }}>
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '16px' }}>
-        <h2 style={{ fontSize: '1.25rem', fontWeight: 700, color: 'var(--text-main)', display: 'flex', alignItems: 'center', gap: '8px' }}>
-          <Navigation style={{ width: '20px', height: '20px', color: 'var(--emerald-400)' }} />
-          Plan Hyderabad Commute
+        <h2 style={{ fontSize: '1.15rem', fontWeight: 700, color: 'var(--text-main)', display: 'flex', alignItems: 'center', gap: '8px' }}>
+          <Navigation style={{ width: '18px', height: '18px', color: 'var(--google-blue)' }} />
+          Plan Journey
         </h2>
-        <span className="badge badge-source">
-          Scheduled GTFS + Live Climate
+        <span className="badge badge-source" style={{ fontSize: '0.72rem' }}>
+          GTFS + CPCB Atmosphere
         </span>
       </div>
 
-      {/* Input Rows */}
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr auto 1fr', gap: '12px', alignItems: 'center', position: 'relative' }}>
+      {/* Input Stack with Aligned Connectors */}
+      <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', position: 'relative' }}>
         {/* Origin */}
         <div ref={originRef} style={{ position: 'relative' }}>
-          <label style={{ display: 'block', fontSize: '0.75rem', fontWeight: 600, color: 'var(--text-muted)', marginBottom: '4px' }}>
-            STARTING POINT
-          </label>
           <div style={{
             display: 'flex',
             alignItems: 'center',
-            background: 'rgba(0, 0, 0, 0.35)',
-            border: '1px solid var(--border-subtle)',
+            background: 'var(--bg-input)',
+            border: '1px solid var(--border-normal)',
             borderRadius: 'var(--radius-md)',
             padding: '10px 14px',
-            gap: '10px'
+            gap: '12px'
           }}>
-            <MapPin style={{ width: '18px', height: '18px', color: '#10b981', flexShrink: 0 }} />
-            <input
-              type="text"
-              value={originSearch}
-              onChange={(e) => {
-                setOriginSearch(e.target.value);
-                fetchPlaces(e.target.value, setOriginSuggestions);
-                setShowOriginMenu(true);
-              }}
-              onFocus={() => {
-                fetchPlaces(originSearch, setOriginSuggestions);
-                setShowOriginMenu(true);
-              }}
-              placeholder="Search origin landmark, metro or bus stop..."
-              style={{
-                width: '100%',
-                background: 'transparent',
-                border: 'none',
-                color: 'var(--text-main)',
-                fontSize: '0.95rem',
-                outline: 'none',
-                fontFamily: 'inherit'
-              }}
-            />
+            <div style={{
+              width: '10px',
+              height: '10px',
+              borderRadius: '50%',
+              background: 'var(--google-green)',
+              boxShadow: '0 0 0 3px rgba(30, 142, 62, 0.25)',
+              flexShrink: 0
+            }} />
+            <div style={{ flex: 1 }}>
+              <span style={{ display: 'block', fontSize: '0.68rem', fontWeight: 700, color: 'var(--text-muted)', letterSpacing: '0.04em' }}>
+                STARTING FROM
+              </span>
+              <input
+                type="text"
+                value={originSearch}
+                onChange={(e) => {
+                  setOriginSearch(e.target.value);
+                  fetchPlaces(e.target.value, setOriginSuggestions);
+                  setShowOriginMenu(true);
+                }}
+                onFocus={() => {
+                  fetchPlaces(originSearch, setOriginSuggestions);
+                  setShowOriginMenu(true);
+                }}
+                placeholder="Search station or place..."
+                style={{
+                  width: '100%',
+                  background: 'transparent',
+                  border: 'none',
+                  color: 'var(--text-main)',
+                  fontSize: '0.92rem',
+                  fontWeight: 600,
+                  outline: 'none',
+                  fontFamily: 'inherit'
+                }}
+              />
+            </div>
           </div>
 
           {showOriginMenu && (
-            <div className="glass-panel" style={{
+            <div style={{
               position: 'absolute',
               top: '100%',
               left: 0,
               right: 0,
               zIndex: 50,
-              marginTop: '6px',
-              maxHeight: '260px',
+              marginTop: '4px',
+              maxHeight: '240px',
               overflowY: 'auto',
-              padding: '6px'
+              padding: '6px',
+              background: '#ffffff',
+              borderRadius: 'var(--radius-md)',
+              border: '1px solid var(--border-normal)',
+              boxShadow: 'var(--shadow-lg)'
             }}>
               {originSuggestions.map((place, idx) => (
                 <div
@@ -169,12 +183,12 @@ export const PlacePicker: React.FC<PlacePickerProps> = ({
                     flexDirection: 'column',
                     transition: 'background 0.15s ease'
                   }}
-                  onMouseEnter={(e) => (e.currentTarget.style.background = 'rgba(255, 255, 255, 0.08)')}
+                  onMouseEnter={(e) => (e.currentTarget.style.background = 'var(--google-blue-surface)')}
                   onMouseLeave={(e) => (e.currentTarget.style.background = 'transparent')}
                 >
-                  <span style={{ fontSize: '0.9rem', fontWeight: 600, color: 'var(--text-main)' }}>{place.name}</span>
+                  <span style={{ fontSize: '0.88rem', fontWeight: 600, color: 'var(--text-main)' }}>{place.name}</span>
                   {place.description && (
-                    <span style={{ fontSize: '0.75rem', color: 'var(--text-dim)' }}>{place.description}</span>
+                    <span style={{ fontSize: '0.74rem', color: 'var(--text-muted)' }}>{place.description}</span>
                   )}
                 </div>
               ))}
@@ -182,67 +196,82 @@ export const PlacePicker: React.FC<PlacePickerProps> = ({
           )}
         </div>
 
-        {/* Swap Button */}
-        <button
-          onClick={handleSwap}
-          className="btn-secondary"
-          title="Swap starting point and destination"
-          style={{ padding: '10px', marginTop: '16px', borderRadius: '50%' }}
-        >
-          <ArrowUpDown style={{ width: '16px', height: '16px', color: 'var(--text-muted)' }} />
-        </button>
+        {/* Floating Swap Button */}
+        <div style={{ display: 'flex', justifyContent: 'flex-end', margin: '-6px 12px -6px 0', zIndex: 2 }}>
+          <button
+            onClick={handleSwap}
+            className="btn-secondary"
+            title="Swap locations"
+            style={{
+              width: '32px',
+              height: '32px',
+              padding: 0,
+              borderRadius: '50%',
+              boxShadow: 'var(--shadow-xs)'
+            }}
+          >
+            <ArrowUpDown style={{ width: '14px', height: '14px', color: 'var(--google-blue)' }} />
+          </button>
+        </div>
 
         {/* Destination */}
         <div ref={destRef} style={{ position: 'relative' }}>
-          <label style={{ display: 'block', fontSize: '0.75rem', fontWeight: 600, color: 'var(--text-muted)', marginBottom: '4px' }}>
-            DESTINATION
-          </label>
           <div style={{
             display: 'flex',
             alignItems: 'center',
-            background: 'rgba(0, 0, 0, 0.35)',
-            border: '1px solid var(--border-subtle)',
+            background: 'var(--bg-input)',
+            border: '1px solid var(--border-normal)',
             borderRadius: 'var(--radius-md)',
             padding: '10px 14px',
-            gap: '10px'
+            gap: '12px'
           }}>
-            <MapPin style={{ width: '18px', height: '18px', color: '#ef4444', flexShrink: 0 }} />
-            <input
-              type="text"
-              value={destSearch}
-              onChange={(e) => {
-                setDestSearch(e.target.value);
-                fetchPlaces(e.target.value, setDestSuggestions);
-                setShowDestMenu(true);
-              }}
-              onFocus={() => {
-                fetchPlaces(destSearch, setDestSuggestions);
-                setShowDestMenu(true);
-              }}
-              placeholder="Search destination landmark, metro or bus stop..."
-              style={{
-                width: '100%',
-                background: 'transparent',
-                border: 'none',
-                color: 'var(--text-main)',
-                fontSize: '0.95rem',
-                outline: 'none',
-                fontFamily: 'inherit'
-              }}
-            />
+            <MapPin style={{ width: '16px', height: '16px', color: 'var(--google-red)', flexShrink: 0 }} />
+            <div style={{ flex: 1 }}>
+              <span style={{ display: 'block', fontSize: '0.68rem', fontWeight: 700, color: 'var(--text-muted)', letterSpacing: '0.04em' }}>
+                DESTINATION
+              </span>
+              <input
+                type="text"
+                value={destSearch}
+                onChange={(e) => {
+                  setDestSearch(e.target.value);
+                  fetchPlaces(e.target.value, setDestSuggestions);
+                  setShowDestMenu(true);
+                }}
+                onFocus={() => {
+                  fetchPlaces(destSearch, setDestSuggestions);
+                  setShowDestMenu(true);
+                }}
+                placeholder="Search station or place..."
+                style={{
+                  width: '100%',
+                  background: 'transparent',
+                  border: 'none',
+                  color: 'var(--text-main)',
+                  fontSize: '0.92rem',
+                  fontWeight: 600,
+                  outline: 'none',
+                  fontFamily: 'inherit'
+                }}
+              />
+            </div>
           </div>
 
           {showDestMenu && (
-            <div className="glass-panel" style={{
+            <div style={{
               position: 'absolute',
               top: '100%',
               left: 0,
               right: 0,
               zIndex: 50,
-              marginTop: '6px',
-              maxHeight: '260px',
+              marginTop: '4px',
+              maxHeight: '240px',
               overflowY: 'auto',
-              padding: '6px'
+              padding: '6px',
+              background: '#ffffff',
+              borderRadius: 'var(--radius-md)',
+              border: '1px solid var(--border-normal)',
+              boxShadow: 'var(--shadow-lg)'
             }}>
               {destSuggestions.map((place, idx) => (
                 <div
@@ -260,12 +289,12 @@ export const PlacePicker: React.FC<PlacePickerProps> = ({
                     flexDirection: 'column',
                     transition: 'background 0.15s ease'
                   }}
-                  onMouseEnter={(e) => (e.currentTarget.style.background = 'rgba(255, 255, 255, 0.08)')}
+                  onMouseEnter={(e) => (e.currentTarget.style.background = 'var(--google-blue-surface)')}
                   onMouseLeave={(e) => (e.currentTarget.style.background = 'transparent')}
                 >
-                  <span style={{ fontSize: '0.9rem', fontWeight: 600, color: 'var(--text-main)' }}>{place.name}</span>
+                  <span style={{ fontSize: '0.88rem', fontWeight: 600, color: 'var(--text-main)' }}>{place.name}</span>
                   {place.description && (
-                    <span style={{ fontSize: '0.75rem', color: 'var(--text-dim)' }}>{place.description}</span>
+                    <span style={{ fontSize: '0.74rem', color: 'var(--text-muted)' }}>{place.description}</span>
                   )}
                 </div>
               ))}
@@ -274,11 +303,11 @@ export const PlacePicker: React.FC<PlacePickerProps> = ({
         </div>
       </div>
 
-      {/* Quick Select Preset Journeys */}
-      <div style={{ marginTop: '16px', display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap' }}>
-        <span style={{ fontSize: '0.75rem', color: 'var(--text-dim)', fontWeight: 600, display: 'flex', alignItems: 'center', gap: '4px' }}>
-          <Sparkles style={{ width: '12px', height: '12px', color: 'var(--bus-amber)' }} />
-          PRESET CORRIDORS:
+      {/* Preset Corridor Chips */}
+      <div style={{ marginTop: '14px', display: 'flex', alignItems: 'center', gap: '6px', flexWrap: 'wrap' }}>
+        <span style={{ fontSize: '0.72rem', color: 'var(--text-muted)', fontWeight: 700, display: 'flex', alignItems: 'center', gap: '4px' }}>
+          <Bookmark style={{ width: '12px', height: '12px', color: 'var(--google-blue)' }} />
+          POPULAR:
         </span>
         {quickTrips.map((trip, idx) => (
           <button
@@ -287,83 +316,72 @@ export const PlacePicker: React.FC<PlacePickerProps> = ({
               onOriginChange(trip.o);
               onDestinationChange(trip.d);
             }}
-            style={{
-              background: 'rgba(255, 255, 255, 0.04)',
-              border: '1px solid var(--border-subtle)',
-              borderRadius: '9999px',
-              color: 'var(--text-muted)',
-              fontSize: '0.75rem',
-              padding: '4px 10px',
-              cursor: 'pointer',
-              transition: 'all 0.15s ease'
-            }}
-            onMouseEnter={(e) => {
-              e.currentTarget.style.background = 'rgba(16, 185, 129, 0.15)';
-              e.currentTarget.style.borderColor = 'rgba(16, 185, 129, 0.4)';
-              e.currentTarget.style.color = '#34d399';
-            }}
-            onMouseLeave={(e) => {
-              e.currentTarget.style.background = 'rgba(255, 255, 255, 0.04)';
-              e.currentTarget.style.borderColor = 'var(--border-subtle)';
-              e.currentTarget.style.color = 'var(--text-muted)';
-            }}
+            className="corridor-chip"
           >
             {trip.label}
           </button>
         ))}
       </div>
 
-      {/* Departure Window & Action Row */}
+      {/* Departure Window & Submit */}
       <div style={{
-        marginTop: '20px',
+        marginTop: '16px',
+        paddingTop: '14px',
+        borderTop: '1px solid var(--border-subtle)',
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'space-between',
         flexWrap: 'wrap',
-        gap: '12px',
-        paddingTop: '16px',
-        borderTop: '1px solid var(--border-subtle)'
+        gap: '12px'
       }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-          <Clock style={{ width: '16px', height: '16px', color: 'var(--comfort-cyan)' }} />
-          <span style={{ fontSize: '0.85rem', color: 'var(--text-muted)', fontWeight: 500 }}>Departure Window:</span>
+        {/* Segmented Departure Timing */}
+        <div style={{
+          display: 'inline-flex',
+          background: 'var(--bg-input)',
+          padding: '3px',
+          borderRadius: 'var(--radius-pill)',
+          border: '1px solid var(--border-normal)'
+        }}>
           {[
-            { label: 'Leave Now', val: 0 },
-            { label: '+30 min', val: 30 },
-            { label: '+60 min', val: 60 }
-          ].map(opt => (
-            <button
-              key={opt.val}
-              onClick={() => onDepartureOffsetChange(opt.val)}
-              style={{
-                background: departureOffset === opt.val ? 'rgba(16, 185, 129, 0.2)' : 'rgba(255, 255, 255, 0.04)',
-                border: `1px solid ${departureOffset === opt.val ? 'var(--emerald-500)' : 'var(--border-subtle)'}`,
-                color: departureOffset === opt.val ? '#34d399' : 'var(--text-muted)',
-                fontWeight: departureOffset === opt.val ? 600 : 400,
-                fontSize: '0.8rem',
-                padding: '6px 12px',
-                borderRadius: 'var(--radius-sm)',
-                cursor: 'pointer',
-                transition: 'all 0.2s ease'
-              }}
-            >
-              {opt.label}
-            </button>
-          ))}
+            { label: 'Now', val: 0 },
+            { label: '+30m', val: 30 },
+            { label: '+60m', val: 60 }
+          ].map(opt => {
+            const active = departureOffset === opt.val;
+            return (
+              <button
+                key={opt.val}
+                onClick={() => onDepartureOffsetChange(opt.val)}
+                style={{
+                  background: active ? '#ffffff' : 'transparent',
+                  border: 'none',
+                  color: active ? 'var(--google-blue)' : 'var(--text-secondary)',
+                  fontWeight: active ? 700 : 500,
+                  fontSize: '0.8rem',
+                  padding: '5px 12px',
+                  borderRadius: 'var(--radius-pill)',
+                  cursor: 'pointer',
+                  transition: 'all 0.15s ease',
+                  boxShadow: active ? '0 1px 3px rgba(60, 64, 67, 0.2)' : 'none'
+                }}
+              >
+                {opt.label}
+              </button>
+            );
+          })}
         </div>
 
         <button
           onClick={onSubmit}
           disabled={isLoading}
           className="btn-primary"
-          style={{ minWidth: '150px' }}
         >
           {isLoading ? (
-            <span>Computing Routes...</span>
+            <span>Computing...</span>
           ) : (
             <>
-              <Search style={{ width: '16px', height: '16px' }} />
-              <span>Find Best Routes</span>
+              <Search style={{ width: '15px', height: '15px' }} />
+              <span>Find Routes</span>
             </>
           )}
         </button>

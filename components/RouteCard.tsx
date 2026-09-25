@@ -3,7 +3,7 @@
 import React from 'react';
 import { Itinerary } from '@/lib/types';
 import { formatDuration, formatCurrency, formatCarbon, getModeColor } from '@/lib/utils';
-import { Zap, IndianRupee, Leaf, Sparkles, Clock, ArrowRight, ShieldCheck } from 'lucide-react';
+import { Zap, IndianRupee, Leaf, Clock, ArrowRight, ShieldCheck, CheckCircle2 } from 'lucide-react';
 
 interface RouteCardProps {
   itinerary: Itinerary;
@@ -22,21 +22,21 @@ export const RouteCard: React.FC<RouteCardProps> = ({
         return (
           <span className="badge badge-fastest">
             <Zap style={{ width: '12px', height: '12px' }} />
-            FASTEST
+            Fastest
           </span>
         );
       case 'cheapest':
         return (
           <span className="badge badge-cheapest">
             <IndianRupee style={{ width: '12px', height: '12px' }} />
-            CHEAPEST
+            Cheapest
           </span>
         );
       case 'greenest':
         return (
           <span className="badge badge-greenest">
             <Leaf style={{ width: '12px', height: '12px' }} />
-            LOWEST CARBON
+            Lowest Carbon
           </span>
         );
     }
@@ -45,47 +45,63 @@ export const RouteCard: React.FC<RouteCardProps> = ({
   return (
     <div
       onClick={onSelect}
-      className="glass-panel"
       style={{
-        padding: '20px',
-        marginBottom: '16px',
+        padding: '18px 20px',
+        marginBottom: '14px',
         cursor: 'pointer',
-        transition: 'all 0.25s cubic-bezier(0.16, 1, 0.3, 1)',
+        transition: 'all 0.15s cubic-bezier(0.2, 0, 0, 1)',
         position: 'relative',
         overflow: 'hidden',
-        border: isSelected ? '2px solid var(--emerald-400)' : '1px solid var(--border-subtle)',
-        boxShadow: isSelected ? '0 0 25px rgba(16, 185, 129, 0.3)' : 'var(--shadow-lg)'
+        background: '#ffffff',
+        borderRadius: 'var(--radius-lg)',
+        border: isSelected ? '2px solid var(--google-blue)' : '1px solid var(--border-normal)',
+        boxShadow: isSelected
+          ? '0 0 0 1px var(--google-blue), 0 4px 14px rgba(26, 115, 232, 0.18)'
+          : 'var(--shadow-xs)'
+      }}
+      onMouseEnter={(e) => {
+        if (!isSelected) {
+          e.currentTarget.style.boxShadow = 'var(--shadow-md)';
+          e.currentTarget.style.transform = 'translateY(-1px)';
+        }
+      }}
+      onMouseLeave={(e) => {
+        if (!isSelected) {
+          e.currentTarget.style.boxShadow = 'var(--shadow-xs)';
+          e.currentTarget.style.transform = 'translateY(0)';
+        }
       }}
     >
-      {/* Top Banner: Climate Comfort Pick Glow */}
+      {/* Top Banner: Climate Comfort Pick */}
       {itinerary.isComfortPick && (
         <div style={{
           position: 'absolute',
           top: 0,
           left: 0,
           right: 0,
-          background: 'linear-gradient(90deg, rgba(139, 92, 246, 0.35) 0%, rgba(6, 182, 212, 0.35) 100%)',
-          borderBottom: '1px solid rgba(192, 132, 252, 0.3)',
-          padding: '4px 16px',
+          background: 'var(--google-green-surface)',
+          borderBottom: '1px solid var(--google-green-border)',
+          padding: '5px 16px',
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'space-between',
-          fontSize: '0.75rem',
+          fontSize: '0.74rem',
           fontWeight: 700,
-          color: '#e0e7ff',
-          letterSpacing: '0.04em'
+          color: 'var(--google-green-hover)'
         }}>
           <span style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-            <Sparkles style={{ width: '13px', height: '13px', color: '#c084fc' }} />
-            RECOMMENDED CLIMATE COMFORT PICK
+            <CheckCircle2 style={{ width: '13px', height: '13px', color: 'var(--google-green)' }} />
+            Optimal Climate Comfort Pick
           </span>
           <span style={{
-            background: 'rgba(139, 92, 246, 0.4)',
-            padding: '2px 8px',
-            borderRadius: '9999px',
-            border: '1px solid rgba(255, 255, 255, 0.2)'
+            background: '#ffffff',
+            color: 'var(--google-green-hover)',
+            padding: '1px 8px',
+            borderRadius: 'var(--radius-pill)',
+            border: '1px solid var(--google-green-border)',
+            fontWeight: 800
           }}>
-            Score {itinerary.climateComfortScore}/100
+            Score: {itinerary.climateComfortScore}/100
           </span>
         </div>
       )}
@@ -95,31 +111,31 @@ export const RouteCard: React.FC<RouteCardProps> = ({
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'space-between',
-        marginTop: itinerary.isComfortPick ? '14px' : '0',
-        marginBottom: '12px'
+        marginTop: itinerary.isComfortPick ? '18px' : '0',
+        marginBottom: '10px'
       }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
           {getCategoryBadge()}
-          <span style={{ fontSize: '0.8rem', color: 'var(--text-dim)', fontWeight: 500 }}>
-            {itinerary.transferCount === 0 ? 'Direct Route' : `${itinerary.transferCount} Transfer`}
+          <span style={{ fontSize: '0.78rem', color: 'var(--text-muted)', fontWeight: 500 }}>
+            {itinerary.transferCount === 0 ? 'Direct' : `${itinerary.transferCount} Transfer`}
           </span>
         </div>
 
-        <div style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '0.85rem', color: 'var(--text-muted)' }}>
-          <Clock style={{ width: '14px', height: '14px', color: 'var(--text-dim)' }} />
+        <div style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '0.82rem', color: 'var(--text-secondary)' }}>
+          <Clock style={{ width: '13px', height: '13px', color: 'var(--text-dim)' }} />
           <span>{itinerary.departureTime}</span>
-          <ArrowRight style={{ width: '12px', height: '12px', color: 'var(--text-dim)' }} />
-          <span style={{ fontWeight: 600, color: 'var(--text-main)' }}>{itinerary.arrivalTime}</span>
+          <ArrowRight style={{ width: '11px', height: '11px', color: 'var(--text-dim)' }} />
+          <span style={{ fontWeight: 700, color: 'var(--text-main)' }}>{itinerary.arrivalTime}</span>
         </div>
       </div>
 
-      {/* Route Title & Visual Segments */}
-      <h3 style={{ fontSize: '1.05rem', fontWeight: 700, color: 'var(--text-main)', marginBottom: '8px' }}>
+      {/* Route Title */}
+      <h3 style={{ fontSize: '1.05rem', fontWeight: 700, color: 'var(--text-main)', marginBottom: '10px' }}>
         {itinerary.title}
       </h3>
 
       {/* Mode Sequence Pills */}
-      <div style={{ display: 'flex', alignItems: 'center', gap: '6px', flexWrap: 'wrap', marginBottom: '14px' }}>
+      <div style={{ display: 'flex', alignItems: 'center', gap: '6px', flexWrap: 'wrap', marginBottom: '12px' }}>
         {itinerary.legs.map((leg, lIdx) => (
           <React.Fragment key={leg.id || lIdx}>
             <span style={{
@@ -127,17 +143,17 @@ export const RouteCard: React.FC<RouteCardProps> = ({
               alignItems: 'center',
               gap: '4px',
               padding: '3px 8px',
-              borderRadius: '6px',
-              fontSize: '0.75rem',
+              borderRadius: 'var(--radius-xs)',
+              fontSize: '0.76rem',
               fontWeight: 600,
-              background: 'rgba(255, 255, 255, 0.05)',
+              background: 'var(--bg-input)',
               borderLeft: `3px solid ${getModeColor(leg.mode)}`,
               color: 'var(--text-main)'
             }}>
               {leg.mode === 'WALK' ? `Walk ${leg.durationMinutes}m` : (leg.routeShortName || leg.mode)}
             </span>
             {lIdx < itinerary.legs.length - 1 && (
-              <span style={{ color: 'var(--text-dim)', fontSize: '0.75rem' }}>→</span>
+              <span style={{ color: 'var(--text-dim)', fontSize: '0.76rem' }}>➔</span>
             )}
           </React.Fragment>
         ))}
@@ -147,41 +163,41 @@ export const RouteCard: React.FC<RouteCardProps> = ({
       <div style={{
         display: 'grid',
         gridTemplateColumns: 'repeat(4, 1fr)',
-        gap: '8px',
-        padding: '12px',
-        background: 'rgba(0, 0, 0, 0.25)',
-        borderRadius: 'var(--radius-md)',
-        marginBottom: '12px',
-        border: '1px solid rgba(255, 255, 255, 0.04)'
+        gap: '6px',
+        padding: '10px 12px',
+        background: 'var(--bg-input)',
+        borderRadius: 'var(--radius-sm)',
+        marginBottom: '10px',
+        border: '1px solid var(--border-subtle)'
       }}>
         {/* Duration */}
         <div>
-          <span style={{ display: 'block', fontSize: '0.7rem', color: 'var(--text-dim)', fontWeight: 600 }}>DURATION</span>
-          <span style={{ fontSize: '1rem', fontWeight: 700, color: 'var(--text-main)' }}>
+          <span style={{ display: 'block', fontSize: '0.68rem', color: 'var(--text-muted)', fontWeight: 700 }}>DURATION</span>
+          <span style={{ fontSize: '1rem', fontWeight: 800, color: 'var(--text-main)' }}>
             {formatDuration(itinerary.totalDurationMinutes)}
           </span>
         </div>
 
         {/* Fare */}
         <div>
-          <span style={{ display: 'block', fontSize: '0.7rem', color: 'var(--text-dim)', fontWeight: 600 }}>FARE</span>
-          <span style={{ fontSize: '1rem', fontWeight: 700, color: '#fbbf24' }}>
+          <span style={{ display: 'block', fontSize: '0.68rem', color: 'var(--text-muted)', fontWeight: 700 }}>FARE</span>
+          <span style={{ fontSize: '1rem', fontWeight: 800, color: 'var(--google-yellow-dark)' }}>
             {formatCurrency(itinerary.totalFareINR, itinerary.fareStatus)}
           </span>
         </div>
 
         {/* Carbon */}
         <div>
-          <span style={{ display: 'block', fontSize: '0.7rem', color: 'var(--text-dim)', fontWeight: 600 }}>EST. CO₂e</span>
-          <span style={{ fontSize: '1rem', fontWeight: 700, color: '#34d399' }}>
+          <span style={{ display: 'block', fontSize: '0.68rem', color: 'var(--text-muted)', fontWeight: 700 }}>EST. CO₂e</span>
+          <span style={{ fontSize: '1rem', fontWeight: 800, color: 'var(--google-green)' }}>
             {formatCarbon(itinerary.totalCarbonKgCO2e)}
           </span>
         </div>
 
         {/* Outdoor Walk */}
         <div>
-          <span style={{ display: 'block', fontSize: '0.7rem', color: 'var(--text-dim)', fontWeight: 600 }}>OUTDOOR WALK</span>
-          <span style={{ fontSize: '1rem', fontWeight: 700, color: '#38bdf8' }}>
+          <span style={{ display: 'block', fontSize: '0.68rem', color: 'var(--text-muted)', fontWeight: 700 }}>WALK</span>
+          <span style={{ fontSize: '1rem', fontWeight: 800, color: 'var(--google-blue)' }}>
             {itinerary.totalWalkMinutes} min
           </span>
         </div>
@@ -192,17 +208,17 @@ export const RouteCard: React.FC<RouteCardProps> = ({
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'space-between',
-        fontSize: '0.72rem',
-        color: 'var(--text-dim)',
-        borderTop: '1px solid rgba(255, 255, 255, 0.05)',
+        fontSize: '0.74rem',
+        color: 'var(--text-muted)',
+        borderTop: '1px solid var(--border-subtle)',
         paddingTop: '8px'
       }}>
         <span style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
-          <ShieldCheck style={{ width: '13px', height: '13px', color: 'var(--emerald-400)' }} />
+          <ShieldCheck style={{ width: '13px', height: '13px', color: 'var(--google-green)' }} />
           {itinerary.confidenceBadge.transitSource}
         </span>
-        <span style={{ color: '#34d399', fontWeight: 600 }}>
-          Saves ~{itinerary.carbonSavedKgCO2e} kg CO₂e vs Car
+        <span style={{ color: 'var(--google-green-hover)', fontWeight: 700 }}>
+          Saves {itinerary.carbonSavedKgCO2e} kg CO₂e
         </span>
       </div>
     </div>
