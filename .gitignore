@@ -1,0 +1,34 @@
+# Dependencies
+/node_modules
+/.pnp
+.pnp.js
+
+# Testing & Coverage
+/coverage
+
+# Next.js Build Output
+/.next/
+/out/
+
+# Production
+/build
+
+# Environment Variables & Secrets
+.env*.local
+.env
+
+# Large Binary Tools (GitHub 100MB File Limit)
+tools/*.jar
+data/transit.db
+data/extracted/
+
+# Logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.pnpm-debug.log*
+
+# System Files
+.DS_Store
+*.pem
+Thumbs.db

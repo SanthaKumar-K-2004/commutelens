@@ -1,0 +1,342 @@
+---
+title: 'Advanced features of gtfs2emis'
+date: "`r Sys.Date()`"
+output: rmarkdown::html_vignette
+abstract: "Advanced functionalities to estimate public transport emissions using the `gtfs2emis` package"
+urlcolor: blue
+vignette: >
+  %\VignetteIndexEntry{Advanced features of gtfs2emis} 
+  %\VignetteEngine{knitr::rmarkdown} 
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>")
+```
+
+
+
+
+
+
+
+```{r, eval = FALSE, message = FALSE}
+library(gtfs2gps)
+library(data.table)
+library(devtools)
+library(sf)
+library(units)
+library(magrittr)
+library(ggplot2)
+library(patchwork)
+```
+
+```{r, eval = FALSE, message=FALSE}
+gtfs_for <- gtfs2gps::read_gtfs(system.file("extdata/fortaleza.zip", package = "gtfs2gps")) %>%
+  gtfs2gps::filter_single_trip() 
+gtfs_for$stop_times[,arrival_time := data.table::as.ITime(arrival_time)]
+gtfs_for$stop_times[,departure_time := data.table::as.ITime(departure_time)]
+gps_for <- gtfs2gps::gtfs2gps(gtfs_for)
+data.table::setDT(gps_for)
+```
+
+Sometimes the GTFS data might have quality issues, particularly regarding the speed and timestamp. For instance, urban buses running over 100 km/h, lower than 2 km/h, or with 'NA' values throughout the whole trip. This produces unrealistic values of 'speed 'and 'timestamp'. In such cases, we adjust the data by setting a valid range of speeds (minimum and maximum valid speeds), and value to replace the missing and unrealistic values. In this case, we consider the valid speed to be between 5 and 75 km/h, and the new speed to be 34 km/h.
+
+```{r, eval = FALSE}
+gps_for_fix <- adjust_speed(gps_data = gps_for
+                            ,min_speed = 5
+                            ,max_speed = 75
+                            ,new_speed = 34
+                            ,clone = TRUE)
+```
+
+Right now we have the GPS data of the trip adjusted with realistic values of speed and timestamp. User can check how the speed changes along the trip. In this example, as the dataset had all speeds within the accepted limits, the `adjust_speed()` replaced only 'NA' values, which resulted in a small change of average speed. Note that few emission factors are speed-dependent (see next section), so having valid speeds is important for having proper emission factors.
+
+```{r, eval = FALSE}
+summary(gps_for$speed)
+summary(gps_for_fix$speed)
+```
+
+This plot shows how speed of trip `D814-T01V01B01-I` behaves along the route. The situation of `speed == 0` indicates the presence of a vehicle stop.
+
+```{r, eval = FALSE, fig.width=7, fig.height=4}
+ggplot(gps_for_fix[trip_id == "D814-T01V01B01-I",])+
+  geom_point(aes(x = cumdist,y = speed))+
+  geom_line(aes(x = cumdist,y = speed))+
+  theme_bw()
+```
+
+In the next step, we convert the data from GPS like format to an 'sf linestring', in order to estimate emissions according to segments of constant speeds.
+
+```{r, eval = FALSE, fig.width=5,fig.height=5}
+linestring_for <- gps_as_sflinestring(gps_for_fix)
+
+ggplot(data=linestring_for) +
+  geom_sf(aes(color= as.numeric(speed))) +
+  scale_color_continuous(type = "viridis")+
+  labs(color = "Speed (km/h)")+
+  theme_void()
+```
+
+**2. Fleet**
+
+Users can assign a fleet data individually for each `shape_id`. The example below shows a situation where the fleet is assigned to each `shape_id`.
+
+```{r, eval = FALSE}
+my_shp <- unique(gps_for$shape_id)
+fleet_data_ef_europe <- data.frame("veh_type" = c(rep(c("Ubus Midi <=15 t"
+                                                        ,"Ubus Std 15 - 18 t"
+                                                        ,"Ubus Artic >18 t"),12),
+                                                  rep("Ubus Artic >18 t",2))
+                                   ,"euro" = c(rep(c("III","IV","V"),12),
+                                               rep("V",2))
+                                   ,"fuel" = rep("D",38)
+                                   ,"tech" = c(rep(c("-","SCR","SCR"),12)
+                                               ,rep("SCR",2))
+                                   ,"fleet_composition" = c(rep(c(0.4,0.5,0.1),12)
+                                                            ,c(1,1))
+                                   ,"shape_id" = c(rep(my_shp[1:12],each = 3)
+                                                   ,my_shp[13:14]))
+head(fleet_data_ef_europe)
+```
+
+In our case study, few `shape_id`'s have more than one vehicle assigned, which means that the probability of being assigned to a certain route is lower than 1. As a rule of thumb, we consider this probability as the frequency of vehicles assigned to that route. For instance, the first `shape_id` has three vehicles with different assignment probabilities (`fleet_composition`).
+
+```{r, eval = FALSE}
+fleet_data_ef_europe[fleet_data_ef_europe$shape_id == my_shp[1],]
+```
+
+The sum of fleet composition per `shape_id` should equal to `1` . We can check this for our example:
+
+```{r, eval = FALSE}
+setDT(fleet_data_ef_europe)[,sum(fleet_composition),by = shape_id]
+```
+
+**3. Visualizing the Emission factors**
+
+In this vignette, we use the European database of emission factors (EF). It is possible to check how it behaves according to `speed` , `pollutant`, `fuel` and `veh_type`:
+
+```{r, eval = FALSE, message = FALSE}
+ef_europe <- ef_europe_emep(speed = units::set_units(10:100,"km/h")
+                            ,veh_type = c("Ubus Midi <=15 t"
+                                          ,"Ubus Std 15 - 18 t"
+                                          ,"Ubus Artic >18 t")
+                            ,euro = c("III", "IV", "V")
+                            ,pollutant = c("CO2", "NOx")
+                            ,fuel = rep("D", 3)
+                            ,tech = c("-", "SCR", "SCR")
+                            ,as_list = TRUE)
+```
+
+We can use the `emis_to_dt()` to easily process the EF from a list (`ef_europe`) into a `data.frame`:
+
+```{r, eval = FALSE}
+ef_europe$speed <- units::set_units(10:100,"km/h")
+ef_europe_dt <- emis_to_dt(emi_list = ef_europe
+                           ,emi_vars = "EF"
+                           ,veh_vars = c("veh_type", "fuel", "euro", "tech")
+                           ,pol_vars = "pollutant"
+                           ,segment_vars = "speed")
+```
+
+Considering the fleet name (`name_fleet`) defined as the vehicle category and euro standard (`veh_type` / `euro_type`).
+
+```{r, eval = FALSE, fig.width=9, fig.height=3}
+setDT(ef_europe_dt)
+ef_europe_dt[,name_fleet := paste0(veh_type, " / Euro ", euro)]
+
+# plot
+ggplot(ef_europe_dt) + 
+  geom_line(aes(x = speed,y = EF,color = name_fleet))+
+  labs(color = "Category / EURO")+
+  facet_wrap(~pollutant,scales = "free")
+```
+
+**4. Emissions estimates**
+
+As the emissions varies with `shape_id` and `fleet`, we need to compute emissions separately, in a loop.
+
+```{r, eval = FALSE, message = FALSE}
+emi_data <- lapply(unique(gps_for$shape_id),function(i){
+  tmp_ef_euro <- ef_europe_emep(speed = setDT(linestring_for)[shape_id == i]$speed,
+                                ,veh_type = fleet_data_ef_europe[shape_id == i]$veh_type
+                                ,euro =  fleet_data_ef_europe[shape_id == i]$euro
+                                ,pollutant = c("CO2","NOx")
+                                ,fuel =  fleet_data_ef_europe[shape_id == i]$fuel
+                                ,tech =  fleet_data_ef_europe[shape_id == i]$tech
+                                ,as_list = TRUE)
+  tmp_emis <- emis(fleet_composition = fleet_data_ef_europe[shape_id == i]$fleet_composition
+                   ,dist = units::set_units(linestring_for[shape_id == i]$dist,"km")
+                   ,ef = tmp_ef_euro
+                   ,aggregate = FALSE
+                   ,as_list = TRUE)
+  tmp_emis$tp_model <- linestring_for[shape_id == i]
+  tmp_emis$time_column <- tmp_emis$tp_model$timestamp  
+  return(tmp_emis)
+})
+```
+
+The emissions are now aggregated in a list, with several characteristics. These information is important for post-process analysis.
+
+```{r, eval = FALSE}
+length(emi_data)
+
+names(emi_data[[1]])
+```
+
+**4. Emissions post-processing**
+
+As the results are stored in a long list, `gtfs2emis` package has a couple of convenient functions that help users post-process and analyse these results. The `emis_summary()` function help summarize emission estimates by either `veh_type`, `pollutant`, or `time`. Using this function, users can easily:
+
+**Calculate total emissions for each vehicle**
+
+```{r, eval = FALSE, fig.height=5, fig.width=6}
+emi_total <- lapply(emi_data,function(i){
+  emis_summary(emi_list = i,
+               emi_var = "emi",
+               by = "veh_type",
+               veh_var = "veh_type",
+               pol_var = "pollutant") 
+})
+emi_total <- data.table::rbindlist(emi_total)
+head(emi_total)
+```
+
+**Calculate total emissions by each pollutant:**
+
+```{r, eval = FALSE, message = FALSE}
+emi_by_pol <- lapply(emi_data,function(i){
+  emis_summary(emi_list = i,
+               emi_var = "emi", 
+               by = "pollutant", 
+               veh_var = "veh_type", 
+               pol_var = "pollutant") 
+})
+emi_by_pol <- data.table::rbindlist(emi_by_pol)
+head(emi_by_pol)
+```
+
+If available in `names(emi_list)`, it is possible to add extra argument about fleet.
+
+```{r, eval = FALSE, message = FALSE}
+emi_by_veh <- lapply(emi_data,function(i){
+  emis_summary(emi_list = i,
+               emi_var = "emi", 
+               by = "veh_type", 
+               veh_var = c("veh_type", "euro", "fuel"),
+               pol_var = "pollutant") 
+})
+emi_by_veh <- data.table::rbindlist(emi_by_veh)
+head(emi_by_veh)
+
+```
+
+**Calculate total emissions by hour and pollutant:**
+
+```{r, eval = FALSE, fig.height=5, fig.width=8}
+emi_by_time <- lapply(emi_data,function(i){
+  tmp_emi <- emis_summary(emi_list = i,
+                          emi_var = "emi",
+                          by = "time",
+                          time_column = "time_column",
+                          veh_var = "veh_type",
+                          pol_var = "pollutant") 
+})
+emi_by_time <- data.table::rbindlist(emi_by_time)
+head(emi_by_time) 
+
+```
+
+Alternatively, the user can use the `emis_to_dt()` function to convert the output of `emission_model()` from a `list` to a `data.table` format:
+
+```{r, eval = FALSE, fig.width=7, fig.height=4}
+emi_dt <- lapply(emi_data,function(i){
+  emis_to_dt(emi_list = i
+             ,emi_vars = "emi"
+             ,veh_vars = c("veh_type", "euro", "fuel")
+             ,pol_vars = "pollutant"
+             ,segment_vars = "time_column")
+})
+emi_dt <- data.table::rbindlist(emi_dt)
+emi_dt[, time_column := data.table::hour(data.table::as.ITime(time_column))]
+emi_dt_sum <- emi_dt[,sum(emi),by =.(pollutant,veh_type,time_column)]
+
+# plot
+ggplot(data=emi_dt_sum) +
+  geom_col(aes(y= as.numeric(V1/1000),x=factor(time_column)
+               ,  fill=veh_type),position = "dodge2")+
+  labs(y="Total emissions (Kg)", x="Hour of the day"
+       ,fill = "Vehicle type") +
+  scale_fill_brewer()+
+  facet_wrap(~pollutant, scales = "free", nrow = 2) + 
+  theme_minimal()
+
+```
+
+**5. Emission into grid**
+
+We now show the example for CO2 emissions distributed spatially. In the `emis_grid` function, user can view the total emissions in a grid, by total pollutants and by hour.
+
+```{r, eval = FALSE, message=FALSE}
+# Create Grid
+grid_gps <- sf::st_make_grid(
+  x = sf::st_bbox(linestring_for[1:nrow(linestring_for),]$geometry)
+  , cellsize = 0.25 / 102.47
+  , crs= 4329
+  , what = "polygons"
+  , square = FALSE)
+grid_gps <- sf::st_sf(id = 1:length(grid_gps),geometry = grid_gps)
+
+emis_dt <- lapply(emi_data,function(i){ # i = 3
+  tmp_emi_dt <- emis_to_dt(emi_list = i
+                           ,emi_vars = "emi"
+                           ,veh_vars = "veh_type"
+                           ,pol_vars = "pollutant")
+  i$tp_model_co2 <- cbind(i$tp_model
+                          ,tmp_emi_dt[pollutant == "CO2"])
+  tmp_emi_grid <- emis_grid(data = sf::st_as_sf(i$tp_model_co2)
+                            ,emi = "emi"
+                            ,grid = grid_gps
+                            ,time_column = "timestamp"
+                            ,time_class = "hour")
+  return(tmp_emi_grid)
+})
+emis_dt <- data.table::rbindlist(emis_dt)
+```
+
+Summing all emissions and plotting:
+
+```{r, eval = FALSE, fig.width=5,fig.height=5}
+emis_dt_plot <- data.table::copy(emis_dt)
+emis_dt_plot[,("total_emi"):= sum(emi), by = .(id)]
+emis_dt_plot <- emis_dt_plot[,.SD[1], by = .(id)]
+emis_dt_plot <- sf::st_as_sf(emis_dt_plot)
+
+p1 <- ggplot() +
+  geom_sf(data=emis_dt_plot, aes(fill= as.numeric(total_emi))
+          , color=NA) +
+  scale_fill_continuous(type = "viridis")+
+  labs(fill = "CO2 (g)",title = "Total emissions")+
+  theme_bw()+
+  theme(axis.text = element_blank(),
+        axis.ticks.length = unit(0, "pt"))
+
+emis_dt_plot <- data.table::copy(emis_dt)
+emis_dt_plot[,("total_emi"):= sum(emi), by = .(id,timestamp)]
+emis_dt_plot <- emis_dt_plot[,.SD[1], by = .(id,timestamp)]
+emis_dt_plot <- sf::st_as_sf(emis_dt_plot)
+
+p2 <- ggplot() +
+  geom_sf(data=emis_dt_plot, aes(fill= as.numeric(total_emi))
+          , color=NA) +
+  scale_fill_continuous(type = "viridis")+
+  labs(fill = "CO2 (g)",title = "Emissions by hour")+
+  facet_wrap(~paste("Hour",timestamp))+
+  theme_bw()+
+  theme(axis.text = element_blank(),
+        axis.ticks.length = unit(0, "pt"))
+
+p1 + p2 
+```
